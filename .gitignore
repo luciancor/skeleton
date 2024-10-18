@@ -1,0 +1,5 @@
+db
+yarn-error.log
+
+components/api/node_modules
+components/client/node_modules

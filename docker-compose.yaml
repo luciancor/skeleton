@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo
+    container_name: skeleton-mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=local_admin
+      - MONGO_INITDB_ROOT_PASSWORD=local_pass
+    volumes:
+      - ./db/data:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+
+  client:
+    build:
+      context: components/client
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./components/client:/app
+    ports:
+      - 3000:3000
+
+  api:
+    build:
+      context: components/api
+      dockerfile: dev.Dockerfile
+    environment:
+      - DB_URI_PATTERN=mongodb://#DB_USER#:#DB_PASS#@#DB_ENDPOINT#:27017
+      - DB_USER=local_admin
+      - DB_PASS=local_pass
+      - DB_ENDPOINT=mongodb
+    volumes:
+      - ./components/api:/app
+    ports:
+      - 8080:8080
